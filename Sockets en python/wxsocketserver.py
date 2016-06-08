@@ -14,17 +14,37 @@ host = ''
 addr = (host, port)
 #definimos en la variable  la cantidad de bytes para recibir desde un cliente
 bufsiz = 1024
-class MainWindow(wx.Frame):
+class MyFrame2(wx.Frame):
     def __init__(self, *args, **kwargs):
-        wx.Frame.__init__(self, *args, **kwargs)
-
-        self.panel = wx.Panel(self)
-        self.text = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE)
-
+        wx.Frame.__init__(self,title = u"Server Socket Python", size = wx.Size( 500,400 ), *args, **kwargs)
+        
+        self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+        
+        fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
+        fgSizer1.SetFlexibleDirection( wx.BOTH )
+        fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+        
+        self.txt_Enviar = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 350,30 ), 0 )
+        fgSizer1.Add( self.txt_Enviar, 0, wx.ALL, 5 )
+        
+        self.btnEnviar = wx.Button( self, wx.ID_ANY, u"Enviar", wx.DefaultPosition, wx.DefaultSize, 0 )
+        fgSizer1.Add( self.btnEnviar, 0, wx.ALL, 5 )
+        
+        fgSizer1.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+        
+        fgSizer1.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+        self.SetSizer( fgSizer1 )
+        self.Layout()
+        self.Centre( wx.BOTH )
+		
+        self.Panel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 200,200 ), wx.TAB_TRAVERSAL )
+        self.text = wx.TextCtrl(self.Panel, wx.ID_ANY,  wx.EmptyString,wx.DefaultPosition, wx.Size( 300,270 ),style=wx.TE_MULTILINE)
         self.sizer = wx.BoxSizer()
         self.sizer.Add(self.text, 1, wx.ALL | wx.EXPAND, 5)
-
-        self.panel.SetSizerAndFit(self.sizer)  
+        fgSizer1.Add( self.Panel, 1, wx.EXPAND |wx.ALL, 5 )
+        self.Panel.SetSizerAndFit(self.sizer)  
+        
+      
         self.Show()
 
         self.thread = threading.Thread(target=self.Server)
@@ -67,6 +87,26 @@ class MainWindow(wx.Frame):
 	def __del__(self):
 		self.tcpServer.close()
 		self.Close()
-app = wx.App(False)
-win = MainWindow(None)
-app.MainLoop()
+########################################################################
+class MyApp(wx.App):
+    def OnInit(self):
+        frame = MyFrame2(None)
+        self.SetTopWindow(frame)
+        frame.Show()
+        return 1
+
+# end of class MyApp
+
+
+
+
+def main():
+	
+	return 0
+
+if __name__ == '__main__':
+	app = MyApp(0)
+	app.MainLoop()
+
+
+

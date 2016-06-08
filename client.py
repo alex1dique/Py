@@ -7,36 +7,9 @@
 ##
 ## PLEASE DO "NOT" EDIT THIS FILE!
 ###########################################################################
-
+import socket
 import wx
 import wx.xrc
-
-import wx
-#importamos el modulo socket
-from socket import *
-from time import ctime
-import random
-import threading
-#import serial
-
-# definir el puerto por el cual se recibiran las peticiones
-port=8080
-#Definimos el host,Es mejor dejarlo en blanco para recibir conexiones externas si es nuestro caso
-host = ''
-#definimos una tupla con los datos del host y el puerto
-addr = (host, port)
-#definimos en la variable  la cantidad de bytes para recibir desde un cliente
-bufsiz = 1024
-########################################################################
-## Python code generated with wxFormBuilder (version Jun 17 2015)
-## http://www.wxformbuilder.org/
-##
-## PLEASE DO "NOT" EDIT THIS FILE!
-###########################################################################
-
-import wx
-import wx.xrc
-
 ###########################################################################
 ## Class MyFrame2
 ###########################################################################
@@ -44,7 +17,7 @@ import wx.xrc
 class MyFrame2 ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 487,521 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"Cliente Socket Python", pos = wx.DefaultPosition, size = wx.Size( 487,521 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -127,22 +100,43 @@ class MyFrame2 ( wx.Frame ):
 		# Connect Events
 		self.btnConectar.Bind( wx.EVT_BUTTON, self.Conectar )
 		self.btnEnviar.Bind( wx.EVT_BUTTON, self.Enviar )
+		self.port =8080
+
+		self.txt_Puerto.SetValue(str(self.port))
+		self.txt_IpServer.SetValue('localhost')
 	
 	def __del__( self ):
-		pass
-	
+		#pass
+		self.client.shutdown(socket.SHUT_RDWR)
+		self.client.close()	
 	
 	# Virtual event handlers, overide them in your derived class
 	def Conectar( self, event ):
-		event.Skip()
+		self.ip=str(self.txt_IpServer.GetValue())
+		self.port =int(self.txt_Puerto.GetValue())
+		self.client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+		self.client.connect((self.ip, self.port))
 	
 	def Enviar( self, event ):
-		event.Skip()
+		self.port =int(self.txt_Puerto.GetValue())
+		self.ip=str(self.txt_IpServer.GetValue())
+		"""Send a message to a socket"""
+		try:
+			#port = random.randint(1025,36000)
+			self.message=self.txt_Mensaje.GetValue()			
+			if self.message=='salir':
+				self.Close()
+			else:
+				self.client.send(self.message)
+			
+				self.txt_Mensaje.SetValue("")
+		except Exception, msg:
+			print msg
+			
 	def Print(self, text):
 		wx.CallAfter(self.text.AppendText, text + "\n")
-
-
 	
+		
 ########################################################################
 class MyApp(wx.App):
     def OnInit(self):
