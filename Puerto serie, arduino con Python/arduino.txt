@@ -1,0 +1,9 @@
+Descargar e instalar sdk arduino
+
+instalar pyserial:
+ aptitude install python-serial
+Agregar al grupo dialout
+cat /etc/group|grep dialout
+usermod -a -G dialout luisjv
+Darle permiso de escritura al puerto serial:
+su -c 'chmod 777 /dev/ttyACM0'
